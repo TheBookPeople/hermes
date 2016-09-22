@@ -18,6 +18,17 @@ func (r *DeliveryRoutingRequest) Valid() error {
 	return valid(r)
 }
 
+// HasErrors - returns true as first arg if errors are present, and the error messages as the second.
+func (r *RoutingResponse) HasErrors() (bool, []Message) {
+	var errors []Message
+	for _, re := range r.RoutingResponseEntries {
+		for _, e := range re.ErrorMessages {
+			errors = append(errors, e)
+		}
+	}
+	return len(errors) > 0, errors
+}
+
 // Call - Perform the actual request.
 func (r *DeliveryRoutingRequest) Call() (*RoutingResponse, error) {
 	err := r.Valid()
@@ -49,10 +60,10 @@ func (r *DeliveryRoutingRequest) Call() (*RoutingResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	errors := routingResp.RoutingResponseEntries[0].ErrorMessages
-	if len(errors) > 0 {
-		e := errors[0]
-		return nil, fmt.Errorf("Hermes Distribution Interface error: %v:%v", e.ErrorCode, e.ErrorDescription)
+
+	hasErrors, errors := routingResp.HasErrors()
+	if hasErrors {
+		return nil, fmt.Errorf("Hermes Distribution Interface error: %v:%v", errors[0].ErrorCode, errors[0].ErrorDescription)
 	}
 	return &routingResp, nil
 }
