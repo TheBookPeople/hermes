@@ -45,7 +45,7 @@ func (r *DeliveryRoutingRequest) Call() (*RoutingResponse, error) {
 
 	client := &http.Client{}
 	req, err := http.NewRequest("POST", "https://sit.hermes-europe.co.uk/routing/service/rest/v3/validateDeliveryAddress", &buf)
-	req.SetBasicAuth("***REMOVED***", "***REMOVED***")
+	req.SetBasicAuth("USER", "PASSWORD")
 	resp, err := client.Do(req)
 	fmt.Println(resp)
 	defer resp.Body.Close()
