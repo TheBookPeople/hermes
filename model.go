@@ -310,31 +310,3 @@ type RoutingResponse struct {
 	CreationDate           time.Time              `xml:"creatingDate"`
 	RoutingResponseEntries []RoutingResponseEntry `xml:"routingResponseEntries>routingResponseEntry"`
 }
-
-// Client - Hermes Distribution Interface Client
-type Client struct {
-	id     string
-	name   string
-	userID string
-}
-
-// NewClient - create a new client.
-func NewClient(ID string, name string, userID string) *Client {
-	return &Client{
-		id:     ID,
-		name:   name,
-		userID: userID,
-	}
-}
-
-// NewDeliveryRoutingRequest - create a new deliveryRoutingRequest
-func (c *Client) NewDeliveryRoutingRequest() DeliveryRoutingRequest {
-	return DeliveryRoutingRequest{
-		ClientID:         c.id,
-		UserID:           c.userID,
-		ClientName:       c.name,
-		CreationDate:     time.Now(),
-		RoutingStartDate: time.Now(),
-		SourceOfRequest:  "CLIENTWS",
-	}
-}

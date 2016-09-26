@@ -1,13 +1,5 @@
 package hermes
 
-import (
-	"bytes"
-	"encoding/xml"
-	"fmt"
-	//"io/ioutil"
-	"net/http"
-)
-
 // AddEntry - Add a DeliveryRoutingRequestEntry.
 func (r *DeliveryRoutingRequest) AddEntry(entry DeliveryRoutingRequestEntry) {
 	r.DeliveryRoutingRequestEntries = append(r.DeliveryRoutingRequestEntries, entry)
@@ -38,43 +30,4 @@ func (r *RoutingResponse) HasErrors() (bool, []Message) {
 		}
 	}
 	return len(errors) > 0, errors
-}
-
-// Call - Perform the actual request.
-func (r *DeliveryRoutingRequest) Call() (*RoutingResponse, error) {
-	err := r.Valid()
-	if err != nil {
-		return nil, err
-	}
-	var buf bytes.Buffer
-	enc := xml.NewEncoder(&buf)
-	enc.Indent("  ", "    ")
-	err = enc.Encode(r)
-	if err != nil {
-		return nil, err
-	}
-
-	client := &http.Client{}
-	req, err := http.NewRequest("POST", "https://sit.hermes-europe.co.uk/routing/service/rest/v3/validateDeliveryAddress", &buf)
-	req.SetBasicAuth("USER", "PASSWORD")
-	resp, err := client.Do(req)
-	fmt.Println(resp)
-	defer resp.Body.Close()
-	//body, err := ioutil.ReadAll(resp.Body)
-	//fmt.Println(string(body))
-	var routingResp RoutingResponse
-	err = xml.NewDecoder(resp.Body).Decode(&routingResp)
-	if err != nil {
-		return nil, err
-	}
-	err = valid(routingResp)
-	if err != nil {
-		return nil, err
-	}
-
-	hasErrors, errors := routingResp.HasErrors()
-	if hasErrors {
-		return nil, fmt.Errorf("Hermes Distribution Interface error: %v:%v", errors[0].ErrorCode, errors[0].ErrorDescription)
-	}
-	return &routingResp, nil
 }
