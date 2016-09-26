@@ -18,6 +18,17 @@ func (r *DeliveryRoutingRequest) Valid() error {
 	return valid(r)
 }
 
+// HasWarnings - returns true as first arg if warning are present, and the warning messages as the second.
+func (r *RoutingResponse) HasWarnings() (bool, []Message) {
+	var warnings []Message
+	for _, re := range r.RoutingResponseEntries {
+		for _, w := range re.WarningMessages {
+			warnings = append(warnings, w)
+		}
+	}
+	return len(warnings) > 0, warnings
+}
+
 // HasErrors - returns true as first arg if errors are present, and the error messages as the second.
 func (r *RoutingResponse) HasErrors() (bool, []Message) {
 	var errors []Message
