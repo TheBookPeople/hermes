@@ -39,7 +39,7 @@ type CashOnDelivery struct {
 
 // StatedDay - TODO
 type StatedDay struct {
-	StatedDayIndicator string    `xml:"statedDayIndicator" valid:"length(1)"` // 1, mandatory
+	StatedDayIndicator string    `xml:"statedDayIndicator" valid:"length(1|1)"` // 1, mandatory
 	StatedDate         time.Time `xml:"statedDate,omitempty"`
 }
 
@@ -83,17 +83,17 @@ type Content struct {
 
 // Parcel - TODO
 type Parcel struct {
-	Weight            int       `xml:"weight" valid:"length(0|7)"`            // 7, mandatory
-	Length            int       `xml:"length" valid:"length(0|4)"`            // 4, mandatory
-	Width             int       `xml:"width" valid:"length(0|4)"`             // 4, mandatory
-	Depth             int       `xml:"depth" valid:"length(0|4)"`             // 4, mandatory
-	Girth             int       `xml:"girth" valid:"length(0|4)"`             // 4, mandatory
-	CombinedDimension int       `xml:"combinedDimension" valid:"length(1|4)"` // 4, mandatory
-	Volume            int       `xml:"volume"`                                // 10, mandatory
-	Currency          string    `xml:"currency" valid:"length(1|3)"`          // 3 mandatory, (USD, GBP etc.)
-	Value             int       `xml:"value"`                                 // 10, mandatory
-	NumberOfParts     int       `xml:"numberOfParts,omitempty"`               // 10 // valid from 1-99 // TODO range
-	NumberOfItems     int       `xml:"numberOfItems,omitempty"`               // 10 // valid from 1-99 // TODO range
+	Weight            int       `xml:"weight" `                      // 7, mandatory
+	Length            int       `xml:"length""`                      // 4, mandatory
+	Width             int       `xml:"width"`                        // 4, mandatory
+	Depth             int       `xml:"depth"`                        // 4, mandatory
+	Girth             int       `xml:"girth"`                        // 4, mandatory
+	CombinedDimension int       `xml:"combinedDimension"`            // 4, mandatory
+	Volume            int       `xml:"volume"`                       // 10, mandatory
+	Currency          string    `xml:"currency" valid:"length(1|3)"` // 3 mandatory, (USD, GBP etc.)
+	Value             int       `xml:"value"`                        // 10, mandatory
+	NumberOfParts     int       `xml:"numberOfParts,omitempty"`      // 10 // valid from 1-99 // TODO range
+	NumberOfItems     int       `xml:"numberOfItems,omitempty"`      // 10 // valid from 1-99 // TODO range
 	HangingGarment    bool      `xml:"hangingGarment,omitempty"`
 	TheftRisk         bool      `xml:"theftRisk,omitempty"`     // Not currently used.
 	MultipleParts     bool      `xml:"multipleParts,omitempty"` // Not currently used.
@@ -126,7 +126,7 @@ type Address struct {
 	City         string `xml:"city,omitempty" valid:"length(0|20)"`         // 20
 	Region       string `xml:"region,omitempty" valid:"length(0|20)"`       // 20
 	PostCode     string `xml:"postCode,omitempty" valid:"length(0|10)"`     // 10,
-	CountryCode  string `xml:"countryCode" valid:"length(1|2)"`             //  2, mandatory
+	CountryCode  string `xml:"countryCode" valid:"length(2|2)"`             //  2, mandatory
 }
 
 // AlertType - TODO
@@ -142,7 +142,7 @@ const (
 
 // Customer - TODO
 type Customer struct {
-	Address             *Address  `xml:"address"`                                            // mandatory
+	Address             *Address  `xml:"address" valid:"required"`                           // mandatory
 	HomePhoneNo         string    `xml:"homePhoneNo,omitempty" valid:"length(0|15)"`         // 15
 	WorkPhoneNo         string    `xml:"workPhoneNo,omitempty" valid:"length(0|15)"`         // 15
 	MobilePhoneNo       string    `xml:"mobilePhoneNo,omitempty" valid:"length(0|15)"`       // 15
@@ -170,29 +170,29 @@ type Diversions struct {
 // DeliveryRoutingRequestEntry - TODO
 type DeliveryRoutingRequestEntry struct {
 	addressValidationRequired bool           `xml:"omitempty"`
-	Customer                  *Customer      `xml:"customer"` // mandatory
-	Parcel                    *Parcel        `xml:"parcel"`   // mandatory
+	Customer                  *Customer      `xml:"customer" valid:"required"` // mandatory
+	Parcel                    *Parcel        `xml:"parcel" valid:"required"`   // mandatory
 	Diversions                *Diversions    `xml:"diversions"`
 	Services                  *Services      `xml:"services"`
 	SenderAddress             *SenderAddress `xml:"senderAddress,omitempty"`
 	ProductCode               int            `xml:"productCode,omitempty" valid:"length(0|10)` // 10
-	ExpectedDespatchDate      time.Time      `xml:"expectedDespatchDate"`                      // mandatory
-	RequiredDate              time.Time      `xml:"requiredDate,omitempty"`
-	CountryOfOrigin           string         `xml:"countryOfOrigin" valid:"iso3166Alpha2"`         // 2, mandatory // TODO iso3166 doesnt exist
-	WarehouseNo               int            `xml:"warehouseNo,omitempty" valid:"length(0|6)`      // 6, not currently used
-	CarrierCode               string         `xml:"carrierCode,omitempty" valid:"length(0|6)`      // 6, not currently used
-	DeliveryMethod            string         `xml:"deliveryMethod,omitempty" valid:"length(0|3)`   // 3, not currently used
-	MultiplePartsID           string         `xml:"multiplePartsID,omitempty" valid:"length(0|50)` // 50
+	ExpectedDespatchDate      time.Time      `xml:"expectedDespatchDate" valid:"required"`     // mandatory
+	//RequiredDate              time.Time      `xml:"requiredDate,omitempty"` // reserved for future use. govalidator is not using date empty value for omit empty...
+	CountryOfOrigin string `xml:"countryOfOrigin" valid:"length(2|2),iso3166Alpha2"` // 2, mandatory // TODO iso3166 doesnt exist
+	WarehouseNo     int    `xml:"warehouseNo,omitempty" valid:"length(0|6)`          // 6, not currently used
+	CarrierCode     string `xml:"carrierCode,omitempty" valid:"length(0|6)`          // 6, not currently used
+	DeliveryMethod  string `xml:"deliveryMethod,omitempty" valid:"length(0|3)`       // 3, not currently used
+	MultiplePartsID string `xml:"multiplePartsID,omitempty" valid:"length(0|50)`     // 50
 }
 
 // DeliveryRoutingRequest - The request to Hermes for delivery info.
 type DeliveryRoutingRequest struct {
 	XMLName                       xml.Name                      `xml:"deliveryRoutingRequest"`
-	ClientID                      string                        `xml:"clientId" valid:"length(1|3)`          // max 3, mandatory
-	ClientName                    string                        `xml:"clientName" valid:"length(1|32)"`      // 32, mandatory
-	ChildClientID                 string                        `xml:"childClientId" valid:"length(0|3)"`    // 3
-	ChildClientName               string                        `xml:"childClientName" valid:"length(0|32)"` // 32
-	BatchNumber                   string                        `xml:"batchNumber"`                          //5
+	ClientID                      string                        `xml:"clientId" valid:"length(1|3)`                    // max 3, mandatory
+	ClientName                    string                        `xml:"clientName" valid:"length(1|32)"`                // 32, mandatory
+	ChildClientID                 string                        `xml:"childClientId,omitempty" valid:"length(0|3)"`    // 3
+	ChildClientName               string                        `xml:"childClientName,omitempty" valid:"length(0|32)"` // 32
+	BatchNumber                   string                        `xml:"batchNumber,omitempty"`                          //5
 	CreationDate                  time.Time                     `xml:"creationDate"`
 	RoutingStartDate              time.Time                     `xml:"routingStartDate"`
 	UserID                        string                        `xml:"userId" valid:"length(0|32)"`               // 32
@@ -204,8 +204,8 @@ type DeliveryRoutingRequest struct {
 type Titles struct {
 	SenderAddressTitle      string `xml:"senderAddressTitle,omitempty" valid:"length(0|32)"`
 	DestinationAddressTitle string `xml:"destinationAddressTitle,omitempty" valid:"length(0|32)"`
-	Entity1Title            string `xml:"entity2Title,omitempty" valid:"length(0|32)"`
-	Entity2Title            string `xml:"entity4Title,omitempty" valid:"length(0|32)"`
+	Entity1Title            string `xml:"entity1Title,omitempty" valid:"length(0|32)"`
+	Entity2Title            string `xml:"entity2Title,omitempty" valid:"length(0|32)"`
 	Entity3Title            string `xml:"entity3Title,omitempty" valid:"length(0|32)"`
 	Entity4Title            string `xml:"entity4Title,omitempty" valid:"length(0|32)"`
 }
@@ -214,7 +214,7 @@ type Titles struct {
 type Barcode struct {
 	BarcodeNumber    string `xml:"barcodeNumber" valid:"length(1|30)"`
 	BarcodeLength    int    `xml:"barcodeLength"`
-	BarcodeSymbology string `xml:"barcodeSymbology" valid:"length(1)"`
+	BarcodeSymbology string `xml:"barcodeSymbology" valid:"length(1|1)"`
 	BarcodeDisplay   string `xml:"barcodeDisplay" valid:"length(1|35)"`
 }
 
