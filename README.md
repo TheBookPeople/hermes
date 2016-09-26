@@ -8,13 +8,13 @@ This library is under active development, and is not yet complete.
 Usage
 -----
 
-Import with
+Import with:
 ```go
 import "github.com/TheBookPeople/hermes"
 ```
 
+Perform request with:
 ```go
-
 // Create a client
 client := hermes.NewClient("username", "123 (client ID)", "client name", "password")
 
@@ -41,7 +41,7 @@ entry := &hermes.DeliveryRoutingRequestEntry{
     Email:          "pm@gov.uk",
     //  CustomerReference1:
     //  CustomerReference2:
-    //  CustomerAlertType: hermes.Email, TODO
+    CustomerAlertType: hermes.Email,
     //  DeliveryMessage: "Please leave at No.11 if not in."
     //  SpecialInstruction1:
   },
