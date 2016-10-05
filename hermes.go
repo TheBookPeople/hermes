@@ -31,3 +31,8 @@ func (r *RoutingResponse) HasErrors() (bool, []Message) {
 	}
 	return len(errors) > 0, errors
 }
+
+// Valid - Check that a response looks to be correct.
+func (r *RoutingResponse) Valid() error {
+	return valid(r)
+}
