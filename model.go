@@ -114,19 +114,19 @@ type SenderAddress struct {
 
 // Address - TODO
 type Address struct {
-	Title        string `xml:"title,omitempty" valid:"length(0|20)"`        // 20
-	FirstName    string `xml:"firstName,omitempty" valid:"length(0|20)"`    // 20
-	LastName     string `xml:"lastName,omitempty" valid:"length(0|20)"`     // 20
-	HouseNo      string `xml:"houseNo,omitempty" valid:"length(0|20)"`      // 20
-	HouseName    string `xml:"houseName,omitempty" valid:"length(0|20)"`    // 20
-	StreetName   string `xml:"streetName,omitempty" valid:"length(0|20)"`   // 20
-	AddressLine1 string `xml:"addressLine1,omitempty" valid:"length(0|20)"` // 20
-	AddressLine2 string `xml:"addressLine2,omitempty" valid:"length(0|20)"` // 20
-	AddressLine3 string `xml:"addressLine3,omitempty" valid:"length(0|20)"` // 20
-	City         string `xml:"city,omitempty" valid:"length(0|20)"`         // 20
-	Region       string `xml:"region,omitempty" valid:"length(0|20)"`       // 20
-	PostCode     string `xml:"postCode,omitempty" valid:"length(0|10)"`     // 10,
-	CountryCode  string `xml:"countryCode" valid:"length(2|2)"`             //  2, mandatory
+	Title        string `xml:"title,omitempty" valid:"length(0|20)"`
+	FirstName    string `xml:"firstName,omitempty" valid:"length(0|50)"`
+	LastName     string `xml:"lastName" valid:"length(1|50)"`
+	HouseNo      string `xml:"houseNo,omitempty" valid:"length(0|10)"`
+	HouseName    string `xml:"houseName,omitempty" valid:"length(0|32)"`
+	StreetName   string `xml:"streetName" valid:"length(1|50)"`
+	AddressLine1 string `xml:"addressLine1,omitempty" valid:"length(0|50)"`
+	AddressLine2 string `xml:"addressLine2,omitempty" valid:"length(0|50)"`
+	AddressLine3 string `xml:"addressLine3,omitempty" valid:"length(0|50)"`
+	City         string `xml:"city" valid:"length(1|50)"`
+	Region       string `xml:"region,omitempty" valid:"length(0|50)"`
+	PostCode     string `xml:"postCode,omitempty" valid:"length(0|10)"`
+	CountryCode  string `xml:"countryCode" valid:"length(2|2)"`
 }
 
 // AlertType - TODO
@@ -230,7 +230,7 @@ type Carrier struct {
 	CarrierID           string               `xml:"carrierId,omitempty" valid:"length(0|6)"`
 	CarrierName         string               `xml:"carrierName,omitempty" valid:"length(0|32)"`
 	CarrierLogoRef      string               `xml:"carrierLogoRef,omitempty" valid:"length(0|50)"`
-	DeliveryMethodDesc  string               `xml:"deliveryMethodDesc,omitempty" valid:"length(0|32)"`
+	DeliveryMethodDesc  string               `xml:"deliveryMethodDesc,omitempty" valid:"length(0|50)"` // Documented incorrectly as 32.
 	Barcode1            Barcode              `xml:"barcode1,omitempty"`
 	Barcode2            Barcode              `xml:"barcode2,omitempty"`
 	SortLevel1          string               `xml:"sortLevel1,omitempty" valid:"length(0|32)"`
@@ -248,16 +248,28 @@ type Carrier struct {
 	ServiceDescriptions []ServiceDescription `xml:"serviceDescriptions,omitempty" valid:"length(0|32)"`
 }
 
+type LabelImage []byte
+
+func (li *LabelImage) Decode() ([]byte, error) {
+	d := make([]byte, base64.StdEncoding.DecodedLen(len(*li)))
+	_, err := base64.StdEncoding.Decode(d, *li)
+
+	if err != nil {
+		return nil, err
+	}
+	return d, nil
+}
+
 // Carriers - TODO
 type Carriers struct {
-	Carrier1     Carrier `xml:"carrier1"`
-	Carrier2     Carrier `xml:"carrier1"`
-	LabelImage   []byte  `xml:"labelImage"`
-	Entity1Value string  `xml:"entity1Value" valid:"length(0|32)"`
-	Entity2Value string  `xml:"entity2Value" valid:"length(0|32)"`
-	Entity3Value string  `xml:"entity3Value" valid:"length(0|32)"`
-	Entity4Value string  `xml:"entity4Value" valid:"length(0|32)"`
-	Titles       Titles  `xml:"titles"`
+	Carrier1     Carrier    `xml:"carrier1"`
+	Carrier2     Carrier    `xml:"carrier2"`
+	LabelImage   LabelImage `xml:"labelImage"`
+	Entity1Value string     `xml:"entity1Value" valid:"length(0|32)"`
+	Entity2Value string     `xml:"entity2Value" valid:"length(0|32)"`
+	Entity3Value string     `xml:"entity3Value" valid:"length(0|32)"`
+	Entity4Value string     `xml:"entity4Value" valid:"length(0|32)"`
+	Titles       Titles     `xml:"titles"`
 }
 
 // ResponseAddress - TODO
@@ -277,9 +289,9 @@ type ResponseAddress struct {
 // RoutingResponseEntry - TODO
 type RoutingResponseEntry struct {
 	SenderAddress       ResponseAddress `xml:"senderAddress"`
-	DestinationAddress  ResponseAddress
-	OutboundCarriers    Carriers
-	InboundCarriers     Carriers
+	DestinationAddress  ResponseAddress `xml:"destinationAddress"`
+	OutboundCarriers    Carriers        `xml:"outboundCarriers"`
+	InboundCarriers     Carriers        `xml:"inboundCarriers"`
 	ServiceDescriptions []ServiceDescription
 	Weight              string    `xml:"weight" valid:"length(0|10)"`
 	Value               string    `xml:"value" valid:"length(0|10)"`
