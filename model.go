@@ -1,6 +1,7 @@
 package hermes
 
 import (
+	"encoding/base64"
 	"encoding/xml"
 	"time"
 )
