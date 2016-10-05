@@ -100,13 +100,13 @@ func (c *Client) call(r *DeliveryRoutingRequest, command string) (*RoutingRespon
 		return nil, err
 	}
 
-	if hasErrors, errors := routingResp.HasErrors(); hasErrors {
-		return nil, fmt.Errorf("Hermes Distribution Interface error: %v:%v", errors[0].ErrorCode, errors[0].ErrorDescription)
-	}
 	if hasWarnings, warnings := routingResp.HasWarnings(); hasWarnings {
 		for _, w := range warnings {
 			fmt.Println("WARNING: ", w)
 		}
+	}
+	if hasErrors, errors := routingResp.HasErrors(); hasErrors {
+		return nil, fmt.Errorf("Hermes Distribution Interface error: %v", errors)
 	}
 	return &routingResp, nil
 }
