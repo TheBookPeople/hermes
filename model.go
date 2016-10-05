@@ -5,14 +5,39 @@ import (
 	"time"
 )
 
+const timeFormat = "2006-01-02T15:04:05-07:00"
+
 // comments: max length, mandatory?
+
+// Time - Wraps time but marshalls to expected format.
+type Time time.Time
+
+func (t Time) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	e.EncodeElement(time.Time(t).Format(timeFormat), start)
+	return nil
+}
+
+func (t *Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
+	var v string
+	d.DecodeElement(&v, &start)
+	parsedTime, err := time.Parse(timeFormat, v)
+	if err != nil {
+		return err
+	}
+	*t = Time(parsedTime)
+	return nil
+}
+
+func Now() Time {
+	return Time(time.Now())
+}
 
 // IdentityService - TODO
 type IdentityService struct {
 	IDCardNo      string `xml:"idCardNo,omitempty" valid:"length(0|20)"`     // 20
 	IdcardType    string `xml:"idCardType,omitempty" valid:"length(0|3)"`    // 3
 	AgeValidation int    `xml:"ageValidation,omitempty" valid:"length(0|3)"` // 3 (0-100 range) // TODO range
-	DateOfBirth   time.Time
+	DateOfBirth   Time
 	Pin           string `xml:"pin,omitempty" valid:"length(0|35)"` // 35
 	Module        string `xml:"Module" valid:"length(0|3)"`         // 3
 }
@@ -39,8 +64,8 @@ type CashOnDelivery struct {
 
 // StatedDay - TODO
 type StatedDay struct {
-	StatedDayIndicator string    `xml:"statedDayIndicator" valid:"length(1|1)"` // 1, mandatory
-	StatedDate         time.Time `xml:"statedDate,omitempty"`
+	StatedDayIndicator string `xml:"statedDayIndicator" valid:"length(1|1)"` // 1, mandatory
+	StatedDate         Time   `xml:"statedDate,omitempty"`
 }
 
 // StatedTime - TODO
@@ -176,8 +201,8 @@ type DeliveryRoutingRequestEntry struct {
 	Services                  *Services      `xml:"services"`
 	SenderAddress             *SenderAddress `xml:"senderAddress,omitempty"`
 	ProductCode               int            `xml:"productCode,omitempty" valid:"length(0|10)` // 10
-	ExpectedDespatchDate      time.Time      `xml:"expectedDespatchDate" valid:"required"`     // mandatory
-	//RequiredDate              time.Time      `xml:"requiredDate,omitempty"` // reserved for future use. govalidator is not using date empty value for omit empty...
+	ExpectedDespatchDate      Time           `xml:"expectedDespatchDate" valid:"required"`     // mandatory
+	//RequiredDate              Time      `xml:"requiredDate,omitempty"` // reserved for future use. govalidator is not using date empty value for omit empty...
 	CountryOfOrigin string `xml:"countryOfOrigin" valid:"length(2|2),iso3166Alpha2"` // 2, mandatory // TODO iso3166 doesnt exist
 	WarehouseNo     int    `xml:"warehouseNo,omitempty" valid:"length(0|6)`          // 6, not currently used
 	CarrierCode     string `xml:"carrierCode,omitempty" valid:"length(0|6)`          // 6, not currently used
@@ -193,8 +218,8 @@ type DeliveryRoutingRequest struct {
 	ChildClientID                 string                        `xml:"childClientId,omitempty" valid:"length(0|3)"`    // 3
 	ChildClientName               string                        `xml:"childClientName,omitempty" valid:"length(0|32)"` // 32
 	BatchNumber                   string                        `xml:"batchNumber,omitempty"`                          //5
-	CreationDate                  time.Time                     `xml:"creationDate"`
-	RoutingStartDate              time.Time                     `xml:"routingStartDate"`
+	CreationDate                  Time                          `xml:"creationDate"`
+	RoutingStartDate              Time                          `xml:"routingStartDate"`
 	UserID                        string                        `xml:"userId" valid:"length(0|32)"`               // 32
 	SourceOfRequest               string                        `xml:"sourceOfRequest" valid:"matches(CLIENTWS)"` // 8, mandatory
 	DeliveryRoutingRequestEntries []DeliveryRoutingRequestEntry `xml:"deliveryRoutingRequestEntries>deliveryRoutingRequestEntry"`
@@ -319,6 +344,6 @@ type RoutingResponse struct {
 	ChildClientName        string                 `xml:"childClientName" valid:"length(0|32)"`
 	ClientLogoRef          string                 `xml:"clientLogoRef" valid:"length(0|50)"`
 	BatchNumber            string                 `xml:"batchNumber"` // should be "number" - not currently used though.
-	CreationDate           time.Time              `xml:"creatingDate"`
+	CreationDate           Time                   `xml:"creationDate"`
 	RoutingResponseEntries []RoutingResponseEntry `xml:"routingResponseEntries>routingResponseEntry"`
 }

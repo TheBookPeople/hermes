@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
-	"time"
 )
 
 const host = "sit.hermes-europe.co.uk"
@@ -34,8 +33,8 @@ func (c *Client) NewDeliveryRoutingRequest() *DeliveryRoutingRequest {
 		ClientID:         c.id,
 		UserID:           c.userID,
 		ClientName:       c.name,
-		CreationDate:     time.Now(),
-		RoutingStartDate: time.Now(),
+		CreationDate:     Now(),
+		RoutingStartDate: Now(),
 		SourceOfRequest:  "CLIENTWS",
 	}
 }
