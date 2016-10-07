@@ -21,6 +21,9 @@ client := hermes.NewClient("username", "123 (client ID)", "client name", "passwo
 // create a routing request
 request := client.NewDeliveryRoutingRequest()
 
+// Note: that the string type used is hermes.TrimmedString, ensuring that whitespace will trimmed.
+// Hermes can return values with excessive whitespace, often far longer than their own documented field lengths.
+
 // create an entry for the request
 entry := &hermes.DeliveryRoutingRequestEntry{
   Customer: &hermes.Customer{

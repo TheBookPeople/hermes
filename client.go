@@ -30,9 +30,9 @@ func NewClient(userID, ID, name, password string) *Client {
 // NewDeliveryRoutingRequest - create a new deliveryRoutingRequest
 func (c *Client) NewDeliveryRoutingRequest() *DeliveryRoutingRequest {
 	return &DeliveryRoutingRequest{
-		ClientID:         c.id,
-		UserID:           c.userID,
-		ClientName:       c.name,
+		ClientID:         TrimmedString(c.id),
+		UserID:           TrimmedString(c.userID),
+		ClientName:       TrimmedString(c.name),
 		CreationDate:     Now(),
 		RoutingStartDate: Now(),
 		SourceOfRequest:  "CLIENTWS",

@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -273,16 +274,16 @@ func TestResponseAddressValidation(t *testing.T) {
 		twentyOne = "123456789012345678901"
 	)
 	tests := []struct {
-		addr1    string
-		addr2    string
-		addr3    string
-		addr4    string
-		addr5    string
-		addr6    string
-		addr7    string
-		addr8    string
-		custRef1 string
-		custRef2 string
+		addr1    TrimmedString
+		addr2    TrimmedString
+		addr3    TrimmedString
+		addr4    TrimmedString
+		addr5    TrimmedString
+		addr6    TrimmedString
+		addr7    TrimmedString
+		addr8    TrimmedString
+		custRef1 TrimmedString
+		custRef2 TrimmedString
 		valid    bool
 	}{
 		{fifty, fifty, fifty, fifty, fifty, fifty, fifty, fifty, twenty, twenty, true},
@@ -350,7 +351,7 @@ func TestMessageValidation(t *testing.T) {
 	for _, test := range tests {
 		m := &Message{
 			ErrorCode:        test.code,
-			ErrorDescription: test.desc,
+			ErrorDescription: TrimmedString(test.desc),
 		}
 		testValid(t, m, test.valid, fmt.Sprintf("Message with code %v and description %q", m.ErrorCode, m.ErrorDescription))
 	}
@@ -409,13 +410,13 @@ func TestResponseParsing(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		expected interface{}
+		expected TrimmedString
 		actual   interface{}
 	}{
 		{"clientId", "123", resp.ClientID},
 		{"clientName", "The Book People", resp.ClientName},
 		{"clientLogoRef", "CLIENT_123", resp.ClientLogoRef},
-		{"creationDate", "2016-10-04T16:16:00+02:00", time.Time(resp.CreationDate).Format("2006-01-02T15:04:05-07:00")},
+		{"creationDate", "2016-10-04T16:16:00+02:00", TrimmedString(time.Time(resp.CreationDate).Format("2006-01-02T15:04:05-07:00"))},
 		{"addressLine1", "Dr David Smith", destAddr.Address1Line},
 		{"addressLine2", "The Book People Ltd", destAddr.Address2Line},
 		{"addressLine3", "Hall Wood Avenue", destAddr.Address3Line},
@@ -431,27 +432,27 @@ func TestResponseParsing(t *testing.T) {
 		{"carr1 carrierID", "HUK", carr1.CarrierID},
 		{"carr1 carrierName", "PCLNET", carr1.CarrierName},
 		{"carr1 carrierLogoRef", "CARRIER_HUK", carr1.CarrierLogoRef},
-		{"carr1 deliveryMethodDesc", "COU-PNET                                         ", carr1.DeliveryMethodDesc},
-		{"carr1 sortLevel1", "10      ", carr1.SortLevel1},
-		{"carr1 sortLevel2", "LVPL    ", carr1.SortLevel2},
-		{"carr1 sortLevel3", "VAN      98      ", carr1.SortLevel3},
-		{"carr1 sortLevel4", "DROP     38      ", carr1.SortLevel4},
-		{"carr1 sortLevel5", "C-ROUND  7123    ", carr1.SortLevel5},
+		{"carr1 deliveryMethodDesc", "COU-PNET", carr1.DeliveryMethodDesc},
+		{"carr1 sortLevel1", "10", carr1.SortLevel1},
+		{"carr1 sortLevel2", "LVPL", carr1.SortLevel2},
+		{"carr1 sortLevel3", "VAN      98", carr1.SortLevel3},
+		{"carr1 sortLevel4", "DROP     38", carr1.SortLevel4},
+		{"carr1 sortLevel5", "C-ROUND  7123", carr1.SortLevel5},
 		{"barcode1 barcodeNumber", "1234567890123456", barcode1.BarcodeNumber},
-		{"bardcode1 barcodeLength", 16, barcode1.BarcodeLength},
+		{"bardcode1 barcodeLength", "16", TrimmedString(strconv.Itoa(barcode1.BarcodeLength))},
 		{"barcode1 barcodeSymbology", "I", barcode1.BarcodeSymbology},
 		{"barcodeDisplay1", "10-123-45-01011199-0", barcode1.BarcodeDisplay},
 		{"carr2 carrierID", "HEU", carr2.CarrierID},
 		{"carr2 carrierName", "TESTNET", carr2.CarrierName},
 		{"carr2 carrierLogoRef", "CARRIER_HEU", carr2.CarrierLogoRef},
-		{"carr2 deliveryMethodDesc", "TEST-PNET                                         ", carr2.DeliveryMethodDesc},
-		{"carr2 sortLevel1", "90      ", carr2.SortLevel1},
-		{"carr2 sortLevel2", "SHEF    ", carr2.SortLevel2},
-		{"carr2 sortLevel3", "VAN      92      ", carr2.SortLevel3},
-		{"carr2 sortLevel4", "DROP     56      ", carr2.SortLevel4},
-		{"carr2 sortLevel5", "C-ROUND  9084    ", carr2.SortLevel5},
+		{"carr2 deliveryMethodDesc", "TEST-PNET", carr2.DeliveryMethodDesc},
+		{"carr2 sortLevel1", "90", carr2.SortLevel1},
+		{"carr2 sortLevel2", "SHEF", carr2.SortLevel2},
+		{"carr2 sortLevel3", "VAN      92", carr2.SortLevel3},
+		{"carr2 sortLevel4", "DROP     56", carr2.SortLevel4},
+		{"carr2 sortLevel5", "C-ROUND  9084", carr2.SortLevel5},
 		{"barcode2 barcodeNumber", "0987654321654321", barcode2.BarcodeNumber},
-		{"bardcode2 barcodeLength", 16, barcode2.BarcodeLength},
+		{"bardcode2 barcodeLength", "16", TrimmedString(strconv.Itoa(barcode2.BarcodeLength))},
 		{"barcode2 barcodeSymbology", "J", barcode2.BarcodeSymbology},
 		{"barcodeDisplay2", "12-123-12-12345678-1", barcode2.BarcodeDisplay},
 		{"weight", "1.65", entry.Weight},
