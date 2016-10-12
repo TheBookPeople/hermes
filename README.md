@@ -6,8 +6,10 @@ A Go / Golang client for the Hermes Distribution Interface / Routing Web Service
 Installation
 ------------
 
-  go get github.com/asaskevich/govalidator
-  go get github.com/TheBookPeople/hermes
+```bash
+go get github.com/asaskevich/govalidator
+go get github.com/TheBookPeople/hermes
+```
 
 Usage
 -----
