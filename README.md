@@ -3,7 +3,11 @@ hermes
 
 A Go / Golang client for the Hermes Distribution Interface / Routing Web Service.
 
-This library is under active development, and is not yet complete.
+Installation
+------------
+
+  go get github.com/asaskevich/govalidator
+  go get github.com/TheBookPeople/hermes
 
 Usage
 -----
