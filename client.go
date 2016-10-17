@@ -113,7 +113,7 @@ func (c *Client) call(r *DeliveryRoutingRequest, command string) (*RoutingRespon
 		}
 	}
 	if hasErrors, errors := routingResp.HasErrors(); hasErrors {
-		return nil, fmt.Errorf("Hermes Distribution Interface error: %v", errors)
+		return &routingResp, fmt.Errorf("Hermes Distribution Interface error: %v", errors)
 	}
 	return &routingResp, nil
 }
