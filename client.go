@@ -7,23 +7,30 @@ import (
 	"net/http"
 )
 
-const host = "sit.hermes-europe.co.uk"
-
 // Client - Hermes Distribution Interface Client
 type Client struct {
 	id       string
 	name     string
 	userID   string
 	password string
+	test     bool
+}
+
+func (c *Client) host() string {
+	if c.test {
+		return "sit.hermes-europe.co.uk"
+	}
+	return "www.hermes-europe.co.uk"
 }
 
 // NewClient - Create a new Client
-func NewClient(userID, ID, name, password string) *Client {
+func NewClient(userID, ID, name, password string, test bool) *Client {
 	return &Client{
 		id:       ID,
 		name:     name,
 		userID:   userID,
 		password: password,
+		test:     test,
 	}
 }
 
@@ -78,7 +85,7 @@ func (c *Client) call(r *DeliveryRoutingRequest, command string) (*RoutingRespon
 	fmt.Println(buf.String())
 	httpClient := &http.Client{}
 
-	url := fmt.Sprintf("https://%s/routing/service/rest/v3/%s", host, command)
+	url := fmt.Sprintf("https://%s/routing/service/rest/v3/%s", c.host(), command)
 	fmt.Println(url)
 	req, err := http.NewRequest("POST", url, &buf)
 	req.SetBasicAuth(c.userID, c.password)
