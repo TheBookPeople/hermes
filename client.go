@@ -86,10 +86,8 @@ func (c *Client) call(r *DeliveryRoutingRequest, command string) (*RoutingRespon
 	httpClient := &http.Client{}
 
 	url := fmt.Sprintf("https://%s/routing/service/rest/v3/%s", c.host(), command)
-	fmt.Println(url)
 	req, err := http.NewRequest("POST", url, &buf)
 	req.SetBasicAuth(c.userID, c.password)
-	fmt.Println(c.userID, c.password)
 	resp, err := httpClient.Do(req)
 	fmt.Println(resp)
 	defer resp.Body.Close()
