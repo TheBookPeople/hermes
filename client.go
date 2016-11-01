@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 )
 
 // Client - Hermes Distribution Interface Client
@@ -14,6 +15,7 @@ type Client struct {
 	userID   string
 	password string
 	test     bool
+	verbose  bool
 }
 
 func (c *Client) host() string {
@@ -31,6 +33,19 @@ func NewClient(userID, ID, name, password string, test bool) *Client {
 		userID:   userID,
 		password: password,
 		test:     test,
+		verbose:  false,
+	}
+}
+
+//NewVerboseDebug -
+func NewVerboseDebug(userID, ID, name, password string, test bool, verbose bool) *Client {
+	return &Client{
+		id:       ID,
+		name:     name,
+		userID:   userID,
+		password: password,
+		test:     test,
+		verbose:  true,
 	}
 }
 
@@ -88,8 +103,17 @@ func (c *Client) call(r *DeliveryRoutingRequest, command string) (*RoutingRespon
 	url := fmt.Sprintf("https://%s/routing/service/rest/v3/%s", c.host(), command)
 	req, err := http.NewRequest("POST", url, &buf)
 	req.SetBasicAuth(c.userID, c.password)
+
+	if c.verbose {
+		httputil.DumpRequest(req, true)
+	}
+
 	resp, err := httpClient.Do(req)
-	fmt.Println(resp)
+
+	if c.verbose {
+		httputil.DumpResponse(resp, true)
+	}
+
 	defer resp.Body.Close()
 	//body, err := ioutil.ReadAll(resp.Body)
 	//fmt.Println(string(body))
