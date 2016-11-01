@@ -24,7 +24,7 @@ func (ts *TrimmedString) UnmarshalXML(d *xml.Decoder, start xml.StartElement) er
 	return nil
 }
 
-const timeFormat = "2006-01-02T15:04:05-07:00"
+const timeFormat = "2006-01-02T15:04:05Z" // Was -07:00 instead of Z
 
 // Time - Wraps time but marshalls to expected format.
 type Time time.Time
