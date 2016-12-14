@@ -135,8 +135,8 @@ type Content struct {
 
 // Parcel - TODO
 type Parcel struct {
-	Weight            int           `xml:"weight" `                      // 7, mandatory
-	Length            int           `xml:"length""`                      // 4, mandatory
+	Weight            int           `xml:"weight"`                       // 7, mandatory
+	Length            int           `xml:"length"`                       // 4, mandatory
 	Width             int           `xml:"width"`                        // 4, mandatory
 	Depth             int           `xml:"depth"`                        // 4, mandatory
 	Girth             int           `xml:"girth"`                        // 4, mandatory
