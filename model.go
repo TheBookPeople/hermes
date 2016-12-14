@@ -24,7 +24,10 @@ func (ts *TrimmedString) UnmarshalXML(d *xml.Decoder, start xml.StartElement) er
 	return nil
 }
 
-const timeFormat = "2006-01-02T15:04:05Z" // Was -07:00 instead of Z
+const (
+	timeFormat     = "2006-01-02T15:04:05Z" // Was -07:00 instead of Z
+	longTimeFormat = "2006-01-02T15:04:05-07:00"
+)
 
 // Time - Wraps time but marshalls to expected format.
 type Time time.Time
@@ -36,8 +39,15 @@ func (t Time) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 
 func (t *Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var v string
+
 	d.DecodeElement(&v, &start)
-	parsedTime, err := time.Parse(timeFormat, v)
+
+	format := longTimeFormat
+	if strings.HasSuffix(v, "Z") {
+		format = timeFormat
+	}
+
+	parsedTime, err := time.Parse(format, v)
 	if err != nil {
 		return err
 	}
