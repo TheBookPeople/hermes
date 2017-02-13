@@ -15,7 +15,7 @@ type Client struct {
 	userID   string
 	password string
 	test     bool
-	verbose  bool
+	Verbose  bool
 }
 
 func (c *Client) host() string {
@@ -33,19 +33,7 @@ func NewClient(userID, ID, name, password string, test bool) *Client {
 		userID:   userID,
 		password: password,
 		test:     test,
-		verbose:  false,
-	}
-}
-
-//NewVerboseDebug -
-func NewVerboseDebug(userID, ID, name, password string, test bool, verbose bool) *Client {
-	return &Client{
-		id:       ID,
-		name:     name,
-		userID:   userID,
-		password: password,
-		test:     test,
-		verbose:  true,
+		Verbose:  false,
 	}
 }
 
@@ -104,13 +92,13 @@ func (c *Client) call(r *DeliveryRoutingRequest, command string) (*RoutingRespon
 	req, err := http.NewRequest("POST", url, &buf)
 	req.SetBasicAuth(c.userID, c.password)
 
-	if c.verbose {
+	if c.Verbose {
 		httputil.DumpRequest(req, true)
 	}
 
 	resp, err := httpClient.Do(req)
 
-	if c.verbose {
+	if c.Verbose {
 		httputil.DumpResponse(resp, true)
 	}
 
