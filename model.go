@@ -133,6 +133,13 @@ type Content struct {
 	Value          int           `xml:"value"`                                 // 10, mandatory // TODO int length
 }
 
+type dutyPaid string
+
+const (
+	Paid   dutyPaid = "P"
+	Unpaid dutyPaid = "U"
+)
+
 // Parcel - TODO
 type Parcel struct {
 	Weight            int           `xml:"weight"`                       // 7, mandatory
@@ -152,7 +159,7 @@ type Parcel struct {
 	Catalogue         int           `xml:"catalogue,omitempty"`
 	Description       int           `xml:"description,omitempty" valid:"length(0|32)"`    // 32
 	OriginOfParcel    int           `xml:"originOfParcel,omitempty" valid:"length(0|32)"` // 32
-	DutyPaid          int           `xml:"dutyPaid,omitempty" valid:"length(0|1)"`        // 1, mandatory if non EU
+	DutyPaid          dutyPaid      `xml:"dutyPaid,omitempty" valid:"length(0|1)"`        // 1, mandatory if non EU U = unpaid, P = paid
 	Contents          []Content     `xml:"contents>content"`
 }
 
