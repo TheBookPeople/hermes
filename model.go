@@ -153,7 +153,7 @@ type Parcel struct {
 	Description       int           `xml:"description,omitempty" valid:"length(0|32)"`    // 32
 	OriginOfParcel    int           `xml:"originOfParcel,omitempty" valid:"length(0|32)"` // 32
 	DutyPaid          int           `xml:"dutyPaid,omitempty" valid:"length(0|1)"`        // 1, mandatory if non EU
-	Contents          []Content     `xml:"contents"`
+	Contents          []Content     `xml:"contents>content"`
 }
 
 // SenderAddress - TODO

@@ -1,6 +1,7 @@
 package hermes
 
 import (
+	"bytes"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
@@ -108,8 +109,62 @@ type Parcel struct {
 	OriginOfParcel    int       `xml:"originOfParcel,omitempty" valid:"length(0|32)"` // 32
 	DutyPaid          int       `xml:"dutyPaid,omitempty" valid:"length(0|1)"`        // 1, mandatory if non EU
 	Contents          []Content `xml:"contents"`
+}*/
+
+func TestParcelContents(t *testing.T) {
+	parcel := &Parcel{
+		Contents: []Content{
+			Content{
+				HsCode:         TrimmedString("moo"),
+				SkuCode:        TrimmedString("foo"),
+				SkuDescription: TrimmedString("description!"),
+				Value:          123,
+			},
+			Content{
+				HsCode:         TrimmedString("moo2"),
+				SkuCode:        TrimmedString("foo2"),
+				SkuDescription: TrimmedString("description! 2"),
+				Value:          456,
+			},
+		},
+	}
+
+	var b bytes.Buffer
+	enc := xml.NewEncoder(&b)
+	enc.Indent("  ", "  ")
+	enc.Encode(parcel)
+
+	expected := `  <Parcel>
+    <weight>0</weight>
+    <length>0</length>
+    <width>0</width>
+    <depth>0</depth>
+    <girth>0</girth>
+    <combinedDimension>0</combinedDimension>
+    <volume>0</volume>
+    <currency></currency>
+    <value>0</value>
+    <contents>
+      <content>
+        <skuCode>foo</skuCode>
+        <skuDescription>description!</skuDescription>
+        <hsCode>moo</hsCode>
+        <value>123</value>
+      </content>
+      <content>
+        <skuCode>foo2</skuCode>
+        <skuDescription>description! 2</skuDescription>
+        <hsCode>moo2</hsCode>
+        <value>456</value>
+      </content>
+    </contents>
+  </Parcel>`
+	if expected != b.String() {
+		t.Errorf("Expected:\n%q but got:\n%q", expected, b.String())
+	}
 }
 
+/*
 // SenderAddress - TODO
 type SenderAddress struct {
 	AddressLine1 string `xml:"addressLine1,omitempty" valid:"length(0|50)"` // 50
