@@ -228,26 +228,26 @@ type Diversions struct {
 
 // DeliveryRoutingRequestEntry - TODO
 type DeliveryRoutingRequestEntry struct {
-	addressValidationRequired bool           `xml:"omitempty"`
+	AddressValidationRequired bool           `xml:"addressValidationRequired,omitempty"`
 	Customer                  *Customer      `xml:"customer" valid:"required"` // mandatory
 	Parcel                    *Parcel        `xml:"parcel" valid:"required"`   // mandatory
 	Diversions                *Diversions    `xml:"diversions"`
 	Services                  *Services      `xml:"services"`
 	SenderAddress             *SenderAddress `xml:"senderAddress,omitempty"`
-	ProductCode               int            `xml:"productCode,omitempty" valid:"length(0|10)` // 10
-	ExpectedDespatchDate      Time           `xml:"expectedDespatchDate" valid:"required"`     // mandatory
+	ProductCode               int            `xml:"productCode,omitempty" valid:"length(0|10)"` // 10
+	ExpectedDespatchDate      Time           `xml:"expectedDespatchDate" valid:"required"`      // mandatory
 	//RequiredDate              Time      `xml:"requiredDate,omitempty"` // reserved for future use. govalidator is not using date empty value for omit empty...
-	CountryOfOrigin TrimmedString `xml:"countryOfOrigin" valid:"length(2|2),iso3166Alpha2"` // 2, mandatory // TODO iso3166 doesnt exist
-	WarehouseNo     int           `xml:"warehouseNo,omitempty" valid:"length(0|6)`          // 6, not currently used
-	CarrierCode     TrimmedString `xml:"carrierCode,omitempty" valid:"length(0|6)`          // 6, not currently used
-	DeliveryMethod  TrimmedString `xml:"deliveryMethod,omitempty" valid:"length(0|3)`       // 3, not currently used
-	MultiplePartsID TrimmedString `xml:"multiplePartsID,omitempty" valid:"length(0|50)`     // 50
+	CountryOfOrigin TrimmedString `xml:"countryOfOrigin" valid:"length(2|2)"`            // 2, mandatory
+	WarehouseNo     int           `xml:"warehouseNo,omitempty" valid:"length(0|6)"`      // 6, not currently used
+	CarrierCode     TrimmedString `xml:"carrierCode,omitempty" valid:"length(0|6)"`      // 6, not currently used
+	DeliveryMethod  TrimmedString `xml:"deliveryMethod,omitempty" valid:"length(0|3)"`   // 3, not currently used
+	MultiplePartsID TrimmedString `xml:"multiplePartsID,omitempty" valid:"length(0|50)"` // 50
 }
 
 // DeliveryRoutingRequest - The request to Hermes for delivery info.
 type DeliveryRoutingRequest struct {
 	XMLName                       xml.Name                      `xml:"deliveryRoutingRequest"`
-	ClientID                      TrimmedString                 `xml:"clientId" valid:"length(1|3)`                    // max 3, mandatory
+	ClientID                      TrimmedString                 `xml:"clientId" valid:"length(1|3)"`                   // max 3, mandatory
 	ClientName                    TrimmedString                 `xml:"clientName" valid:"length(1|32)"`                // 32, mandatory
 	ChildClientID                 TrimmedString                 `xml:"childClientId,omitempty" valid:"length(0|3)"`    // 3
 	ChildClientName               TrimmedString                 `xml:"childClientName,omitempty" valid:"length(0|32)"` // 32

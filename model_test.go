@@ -239,7 +239,7 @@ type DeliveryRoutingRequestEntry struct {
 	ProductCode               int            `xml:"productCode,omitempty" valid:"length(0|10)` // 10
 	ExpectedDespatchDate      time.Time      `xml:"expectedDespatchDate" valid:"required"`     // mandatory
 	//RequiredDate              time.Time      `xml:"requiredDate,omitempty"` // reserved for future use. govalidator is not using date empty value for omit empty...
-	CountryOfOrigin string `xml:"countryOfOrigin" valid:"length(2|2),iso3166Alpha2"` // 2, mandatory // TODO iso3166 doesnt exist
+	CountryOfOrigin string `xml:"countryOfOrigin" valid:"length(2|2)"` // 2, mandatory
 	WarehouseNo     int    `xml:"warehouseNo,omitempty" valid:"length(0|6)`          // 6, not currently used
 	CarrierCode     string `xml:"carrierCode,omitempty" valid:"length(0|6)`          // 6, not currently used
 	DeliveryMethod  string `xml:"deliveryMethod,omitempty" valid:"length(0|3)`       // 3, not currently used
