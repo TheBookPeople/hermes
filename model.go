@@ -12,14 +12,15 @@ type TrimmedString string
 
 // MarshalXML - trims whitespace when marshalling.
 func (ts *TrimmedString) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	e.EncodeElement(strings.TrimSpace(string(*ts)), start)
-	return nil
+	return e.EncodeElement(strings.TrimSpace(string(*ts)), start)
 }
 
 // UnmarshalXML - trims whitespace when Unmarshalling.
 func (ts *TrimmedString) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var v string
-	d.DecodeElement(&v, &start)
+	if err := d.DecodeElement(&v, &start); err != nil {
+		return err
+	}
 	*ts = TrimmedString(strings.TrimSpace(v))
 	return nil
 }
@@ -33,14 +34,15 @@ const (
 type Time time.Time
 
 func (t Time) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
-	e.EncodeElement(time.Time(t).Format(timeFormat), start)
-	return nil
+	return e.EncodeElement(time.Time(t).Format(timeFormat), start)
 }
 
 func (t *Time) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
 	var v string
 
-	d.DecodeElement(&v, &start)
+	if err := d.DecodeElement(&v, &start); err != nil {
+		return err
+	}
 
 	format := longTimeFormat
 	if strings.HasSuffix(v, "Z") {

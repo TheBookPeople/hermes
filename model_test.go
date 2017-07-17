@@ -132,7 +132,9 @@ func TestParcelContents(t *testing.T) {
 	var b bytes.Buffer
 	enc := xml.NewEncoder(&b)
 	enc.Indent("  ", "  ")
-	enc.Encode(parcel)
+	if err := enc.Encode(parcel); err != nil {
+		t.Error(err)
+	}
 
 	expected := `  <Parcel>
     <weight>0</weight>
