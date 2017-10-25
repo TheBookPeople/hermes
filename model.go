@@ -355,7 +355,7 @@ type RoutingResponseEntry struct {
 	InboundCarriers     Carriers        `xml:"inboundCarriers"`
 	ServiceDescriptions []ServiceDescription
 	Weight              TrimmedString `xml:"weight" valid:"length(0|10)"`
-	Value               TrimmedString `xml:"value" valid:"length(0|10)"`
+	Value               TrimmedString `xml:"value" valid:"length(0|12)"`
 	Entity1Value        TrimmedString `xml:"entity1Value" valid:"length(0|32)"`
 	Entity2Value        TrimmedString `xml:"entity2Value" valid:"length(0|32)"`
 	Entity3Value        TrimmedString `xml:"entity3Value" valid:"length(0|32)"`
